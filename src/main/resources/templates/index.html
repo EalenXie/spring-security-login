@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <#assign  user=Session.SPRING_SECURITY_CONTEXT.authentication.principal/>
+</head>
+<body>
+欢迎你,${user.username}<br/>
+<a href="/logout">注销</a>
+
+</body>
+</html>
