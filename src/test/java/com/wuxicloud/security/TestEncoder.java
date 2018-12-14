@@ -15,7 +15,6 @@ public class TestEncoder {
         String password = "admin";
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(4);
         String enPassword = encoder.encode(password);
-        System.out.println(UUID.randomUUID().toString());
         System.out.println(enPassword);
     }
 }
