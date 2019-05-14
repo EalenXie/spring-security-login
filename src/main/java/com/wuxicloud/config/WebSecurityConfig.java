@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 antMatchers("/static/**").permitAll().anyRequest().authenticated().
                 and().formLogin().loginPage("/login").permitAll().successHandler(loginSuccessHandler()).
                 and().logout().permitAll().invalidateHttpSession(true).
-                deleteCookies("JSESSIONID").logoutSuccessHandler(logoutSuccessHandler()).
+                deleteCookies("JSESSIONID").logoutSuccessHandler(logoutSuccessHandler())
+                .and().rememberMe().
                 and().sessionManagement().maximumSessions(10).expiredUrl("/login");
     }
 
@@ -49,6 +51,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
         auth.eraseCredentials(false);
+    }
+
+    @Bean
+    public TokenBasedRememberMeServices tokenBasedRememberMeServices() {
+        return new TokenBasedRememberMeServices("springRocks", userDetailsService());
     }
 
     @Bean
@@ -64,9 +71,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
                 try {
                     SecurityUser user = (SecurityUser) authentication.getPrincipal();
-                    logger.info("USER : " + user.getUsername() + " LOGOUT SUCCESS !  ");
+                    logger.info("USER : {} LOGIN SUCCESS ! ", user.getUsername());
                 } catch (Exception e) {
-                    logger.info("LOGOUT EXCEPTION , e : " + e.getMessage());
+                    logger.error("printStackTrace", e);
                 }
                 httpServletResponse.sendRedirect("/login");
             }
@@ -87,6 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Bean
+    @Override
     public UserDetailsService userDetailsService() {    //用户登录实现
         return new UserDetailsService() {
             @Autowired
