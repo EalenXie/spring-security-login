@@ -37,13 +37,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception { //配置策略
         http.csrf().disable();
-        //logoutSuccessUrl("/login")//使用了logoutSuccessHandler实现了这个功能
         http.authorizeRequests().
                 antMatchers("/static/**").permitAll().anyRequest().authenticated().
                 and().formLogin().loginPage("/login").permitAll().successHandler(loginSuccessHandler()).
-                and().logout().permitAll().invalidateHttpSession(true).
-                deleteCookies("JSESSIONID").logoutSuccessHandler(logoutSuccessHandler())
-                .and().rememberMe().
+                and().logout().permitAll().invalidateHttpSession(true).deleteCookies("JSESSIONID").logoutSuccessHandler(logoutSuccessHandler()).
+                and().rememberMe().
                 and().sessionManagement().maximumSessions(10).expiredUrl("/login");
     }
 
