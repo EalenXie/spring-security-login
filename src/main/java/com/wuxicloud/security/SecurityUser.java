@@ -13,15 +13,15 @@ public class SecurityUser extends User implements UserDetails {
 
     public SecurityUser(User user) {
         if (user != null) {
-            this.setUser_uuid(user.getUser_uuid());
+            this.setUserUuid(user.getUserUuid());
             this.setUsername(user.getUsername());
             this.setPassword(user.getPassword());
             this.setEmail(user.getEmail());
             this.setTelephone(user.getTelephone());
             this.setRole(user.getRole());
             this.setImage(user.getImage());
-            this.setLast_ip(user.getLast_ip());
-            this.setLast_time(user.getLast_time());
+            this.setLastIp(user.getLastIp());
+            this.setLastTime(user.getLastTime());
         }
     }
 
