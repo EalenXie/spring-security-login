@@ -69,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
                 try {
                     SecurityUser user = (SecurityUser) authentication.getPrincipal();
-                    logger.info("USER : {} LOGIN SUCCESS ! ", user.getUsername());
+                    logger.info("USER : {} LOGOUT SUCCESS ! ", user.getUsername());
                 } catch (Exception e) {
                     logger.error("printStackTrace", e);
                 }
