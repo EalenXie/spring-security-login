@@ -1,15 +1,18 @@
 package com.wuxicloud.model;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 
 /**
  * Created by EalenXie on 2018/7/5 15:17
  */
-@Entity
-@Table(name = "USER")
+
+@TableName("user")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
+    @TableId(type = IdType.AUTO)
     private Integer id;
     private String userUuid;   //用户UUID
     private String username;    //用户名

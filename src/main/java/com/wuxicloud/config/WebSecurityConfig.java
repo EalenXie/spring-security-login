@@ -1,7 +1,7 @@
 package com.wuxicloud.config;
 
-import com.wuxicloud.dao.UserRepository;
 import com.wuxicloud.model.User;
+import com.wuxicloud.repository.UserRepository;
 import com.wuxicloud.security.SecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ import java.io.IOException;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception { //配置策略
@@ -49,6 +51,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
         auth.eraseCredentials(false);
+    }
+
+
+    @Override
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Resource
+            private UserRepository userRepository;
+
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                User user = userRepository.findByUsername(username);
+                if (user == null) throw new UsernameNotFoundException("Username " + username + " not found");
+                return new SecurityUser(user);
+            }
+        };
     }
 
     @Bean
@@ -86,23 +105,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 User userDetails = (User) authentication.getPrincipal();
                 logger.info("USER : " + userDetails.getUsername() + " LOGIN SUCCESS !  ");
                 super.onAuthenticationSuccess(request, response, authentication);
-            }
-        };
-    }
-
-
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {    //用户登录实现
-        return new UserDetailsService() {
-            @Autowired
-            private UserRepository userRepository;
-
-            @Override
-            public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-                User user = userRepository.findByUsername(s);
-                if (user == null) throw new UsernameNotFoundException("Username " + s + " not found");
-                return new SecurityUser(user);
             }
         };
     }

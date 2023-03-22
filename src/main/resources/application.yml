@@ -17,3 +17,12 @@ server:
     whitelabel:
       enabled: true
 
+mybatis-plus:
+  configuration:
+    # json 格式 键的值为null,返回属性
+    call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
+    # 解决null值问题导致的jdbcTypeException
+    jdbc-type-for-null: "null"
+  # 扫描 *Mapper.xml 路径
+  mapper-locations: classpath:/mapper/**.xml
